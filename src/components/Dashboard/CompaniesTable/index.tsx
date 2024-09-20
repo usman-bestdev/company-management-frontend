@@ -1,99 +1,65 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import moment from "moment";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+// Define the Company type
 type Company = {
   id: string;
   name: string;
   dateJoined: string;
-  status: "Pending" | "Active" | "Suspended";
+  status: "pending" | "active" | "suspended";
   lastActivity: string;
+  createdAt: string;
+  updatedAt: string;
 };
-const companies: Company[] = [
-  {
-    id: "#302012",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Pending",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302013",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Active",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302014",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Suspended",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302012",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Pending",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302012",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Pending",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302013",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Active",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302014",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Suspended",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302012",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Pending",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302013",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Active",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302014",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Suspended",
-    lastActivity: "Sep 23 - 2023",
-  },
-  // Add more data as needed
-];
+
 const CompaniesTable: React.FC = () => {
   const router = useRouter();
 
-  // State to manage selected page
+  // State to manage companies, pagination, and loading/error states
+  const [companies, setCompanies] = useState<Company[]>([]);
   const [selectedPage, setSelectedPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch companies data when the component mounts
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch("http://localhost:4000/company");
+        const data = await response.json();
+
+        // Assuming the API response matches the structure of the Company type
+        setCompanies(data);
+      } catch (err) {
+        setError("Failed to fetch companies.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCompanies();
+  }, []);
 
   const handleCompanyClick = (companyId: string) => {
-    router.push(`/company/service-fee`);
+    router.push(`/company/service-fee?companyId=${companyId}`);
   };
 
   const handlePageClick = (page: number) => {
     setSelectedPage(page);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="w-full">
@@ -137,24 +103,25 @@ const CompaniesTable: React.FC = () => {
                   {company.name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-[#858C95] font-medium text-[14px] leading-[20px] ">
-                  {company.dateJoined}
+                  {moment(company.createdAt).format("MMM DD - YYYY")}
                 </td>
 
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
                     className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      company.status === "Active"
+                      company.status === "active"
                         ? "bg-green-100 text-green-800"
-                        : company.status === "Pending"
+                        : company.status === "pending"
                         ? "bg-yellow-100 text-yellow-800"
                         : "bg-red-100 text-red-800"
                     }`}
                   >
-                    {company.status}
+                    {company?.status?.charAt(0)?.toUpperCase() +
+                      company?.status?.slice(1)?.toLowerCase()}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-[#858C95] font-medium text-[14px] leading-[20px] ">
-                  {company.lastActivity}
+                  {moment(company.updatedAt).format("MMM DD - YYYY")}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right">
                   <span className="text-gray-500 cursor-pointer">⋮</span>
@@ -169,7 +136,7 @@ const CompaniesTable: React.FC = () => {
       <div className="border-b border-[#E9E9E9]"></div>
       <div className="flex items-center justify-between px-6 py-4 ">
         <span className="font-medium text-[14px] leading-[20px] tracking-[-0.5%] text-[#858C95]">
-          Showing 1-10 from 100
+          Showing 1-10 from {companies.length}
         </span>
 
         <div className="inline-flex items-center space-x-2">
