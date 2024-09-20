@@ -1,50 +1,55 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import React, { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import AddFeeSchemeModal from "../AddFeeSchemeModal";
 
 type Scheme = {
-  id: string;
-  activityName: string;
-  rule: string;
-  serviceFee: number;
+  id: number;
+  assetType: string;
+  gasPrice: number;
+  startDate: string;
+  endDate: string;
+  activity: boolean;
+  createdAt: string;
+  updatedAt: string;
+  company: {
+    id: number;
+    name: string;
+    status: string;
+    lastActivity: string;
+    createdAt: string;
+    updatedAt: string;
+  };
 };
-
-const schemes: Scheme[] = [
-  {
-    id: "#302012",
-    activityName: "Activity Name",
-    rule: "Rule",
-    serviceFee: 14.0,
-  },
-  {
-    id: "#302013",
-    activityName: "Activity Name",
-    rule: "Rule",
-    serviceFee: 14.0,
-  },
-  {
-    id: "#302014",
-    activityName: "Activity Name",
-    rule: "Rule",
-    serviceFee: 14.0,
-  },
-  {
-    id: "#302015",
-    activityName: "Activity Name",
-    rule: "Rule",
-    serviceFee: 14.0,
-  },
-  {
-    id: "#302016",
-    activityName: "Activity Name",
-    rule: "Rule",
-    serviceFee: 14.0,
-  },
-];
 
 const FeeSchemeTable: React.FC = () => {
   const [selectedPage, setSelectedPage] = useState(1);
   const [isOpen, setIsOpen] = useState<number | null>(null);
+  const [schemes, setSchemes] = useState<Scheme[]>([]);
+  const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
+
+  const companyId = searchParams.get("companyId");
+
+  useEffect(() => {
+    if (companyId) {
+      fetchServiceFees(companyId);
+    }
+  }, [companyId]);
+
+  const fetchServiceFees = async (companyId: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:4000/service-fee?companyId=${companyId}`
+      );
+      const data = await response.json();
+      setSchemes(data); // Set the fetched service fees
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching service fees:", error);
+      setLoading(false);
+    }
+  };
 
   const handlePageClick = (page: number) => {
     setSelectedPage(page);
@@ -53,6 +58,10 @@ const FeeSchemeTable: React.FC = () => {
   const toggleDropdown = (index: number) => {
     setIsOpen(isOpen === index ? null : index);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="w-full bg-white shadow-md rounded-lg mt-6">
@@ -92,13 +101,13 @@ const FeeSchemeTable: React.FC = () => {
                   {scheme.id}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap cursor-pointer font-medium text-[14px] leading-[20px] ">
-                  {scheme.activityName}
+                  {scheme.assetType}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-[#858C95] font-medium text-[14px] leading-[20px] ">
-                  {scheme.rule}
+                  {scheme.assetType}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-[#858C95] font-medium text-[14px] leading-[20px] ">
-                  {scheme.serviceFee}
+                  {scheme.gasPrice}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right relative">
                   <div className="relative inline-block text-left">
@@ -125,7 +134,6 @@ const FeeSchemeTable: React.FC = () => {
         </span>
 
         <div className="inline-flex items-center space-x-2">
-          {/* Previous Button */}
           <button
             className="w-8 h-8 flex items-center justify-center text-sm font-medium text-gray-500 bg-white rounded-lg hover:bg-gray-100"
             onClick={() => handlePageClick(selectedPage - 1)}
@@ -134,7 +142,6 @@ const FeeSchemeTable: React.FC = () => {
             <ChevronLeftIcon className="w-4 h-4" />
           </button>
 
-          {/* Page Numbers */}
           {[1, 2, 3, 4, 5].map((page) => (
             <button
               key={page}
@@ -149,10 +156,8 @@ const FeeSchemeTable: React.FC = () => {
             </button>
           ))}
 
-          {/* Ellipsis */}
           <span className="text-gray-500">...</span>
 
-          {/* Next Button */}
           <button
             className="w-8 h-8 flex items-center justify-center text-sm font-medium text-gray-500 bg-white rounded-lg hover:bg-gray-100"
             onClick={() => handlePageClick(selectedPage + 1)}
