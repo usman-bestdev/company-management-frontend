@@ -81,7 +81,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
   };
 
   return (
-    <div className="bg-white py-6 pl-6 pr-[21.5px] shadow rounded-lg flex flex-col xl:max-h-[199px]">
+    <div className="bg-white py-6 pl-6 pr-[21.5px]  rounded-lg flex flex-col xl:max-h-[199px] border border-[#E9E9E9]">
       <div className="flex flex-row justify-between items-center">
         <h3 className="font-semibold text-[18px] leading-[26px] text-[#14151A]">
           {title}
@@ -101,26 +101,24 @@ const StatsCard: React.FC<StatsCardProps> = ({
           <p className="font-bold text-[30px] leading-[36px] tracking-[-1.6%] text-[#14151A] mt-[30px]">
             {value}
           </p>
-
-         
         </div>
         <div className="mt-4 w-6/12">
           <Line data={data} options={options} />
         </div>
       </div>
       <div className="flex flex-row items-center mt-2 gap-2">
-            <span
-              className={`font-medium text-[14px] leading-[20px] tracking-[-0.5%] ${
-                percentageChange >= 0 ? "text-[#26BD6C]" : "text-red-500"
-              }`}
-            >
-              {percentageChange >= 0 ? "↑" : "↓"} {Math.abs(percentageChange)}%
-            </span>
+        <span
+          className={`font-medium text-[14px] leading-[20px] tracking-[-0.5%] ${
+            percentageChange >= 0 ? "text-[#26BD6C]" : "text-red-500"
+          }`}
+        >
+          {percentageChange >= 0 ? "↑" : "↓"} {Math.abs(percentageChange)}%
+        </span>
 
-            <p className="font-medium text-[14px] leading-[20px] tracking-[-0.5%] text-[#858C95]">
-              vs {period}
-            </p>
-          </div>
+        <p className="font-medium text-[14px] leading-[20px] tracking-[-0.5%] text-[#858C95]">
+          vs {period}
+        </p>
+      </div>
     </div>
   );
 };

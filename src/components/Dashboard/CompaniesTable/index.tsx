@@ -30,6 +30,55 @@ const companies: Company[] = [
     status: "Suspended",
     lastActivity: "Sep 23 - 2023",
   },
+  {
+    id: "#302012",
+    name: "Tech Innovations Inc",
+    dateJoined: "Sep 23 - 2023",
+    status: "Pending",
+    lastActivity: "Sep 23 - 2023",
+  },
+  {
+    id: "#302012",
+    name: "Tech Innovations Inc",
+    dateJoined: "Sep 23 - 2023",
+    status: "Pending",
+    lastActivity: "Sep 23 - 2023",
+  },
+  {
+    id: "#302013",
+    name: "Tech Innovations Inc",
+    dateJoined: "Sep 23 - 2023",
+    status: "Active",
+    lastActivity: "Sep 23 - 2023",
+  },
+  {
+    id: "#302014",
+    name: "Tech Innovations Inc",
+    dateJoined: "Sep 23 - 2023",
+    status: "Suspended",
+    lastActivity: "Sep 23 - 2023",
+  },
+  {
+    id: "#302012",
+    name: "Tech Innovations Inc",
+    dateJoined: "Sep 23 - 2023",
+    status: "Pending",
+    lastActivity: "Sep 23 - 2023",
+  },
+  {
+    id: "#302013",
+    name: "Tech Innovations Inc",
+    dateJoined: "Sep 23 - 2023",
+    status: "Active",
+    lastActivity: "Sep 23 - 2023",
+  },
+  {
+    id: "#302014",
+    name: "Tech Innovations Inc",
+    dateJoined: "Sep 23 - 2023",
+    status: "Suspended",
+    lastActivity: "Sep 23 - 2023",
+  },
   // Add more data as needed
 ];
 const CompaniesTable: React.FC = () => {
