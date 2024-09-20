@@ -1,102 +1,41 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-type Company = {
+
+type Scheme = {
   id: string;
-  name: string;
-  dateJoined: string;
-  status: "Pending" | "Active" | "Suspended";
-  lastActivity: string;
+  activityName: string;
+  rule: string;
+  serviceFee: number;
 };
-const companies: Company[] = [
+
+const schemes: Scheme[] = [
   {
     id: "#302012",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Pending",
-    lastActivity: "Sep 23 - 2023",
+    activityName: "Activity Name",
+    rule: "Rule",
+    serviceFee: 14.0,
   },
   {
     id: "#302013",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Active",
-    lastActivity: "Sep 23 - 2023",
+    activityName: "Activity Name",
+    rule: "Rule",
+    serviceFee: 14.0,
   },
-  {
-    id: "#302014",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Suspended",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302012",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Pending",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302012",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Pending",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302013",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Active",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302014",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Suspended",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302012",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Pending",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302013",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Active",
-    lastActivity: "Sep 23 - 2023",
-  },
-  {
-    id: "#302014",
-    name: "Tech Innovations Inc",
-    dateJoined: "Sep 23 - 2023",
-    status: "Suspended",
-    lastActivity: "Sep 23 - 2023",
-  },
-  // Add more data as needed
+  // Add more rows if needed
 ];
-const CompaniesTable: React.FC = () => {
-  const router = useRouter();
 
-  // State to manage selected page
+const FeeSchemeTable: React.FC = () => {
   const [selectedPage, setSelectedPage] = useState(1);
-
-  const handleCompanyClick = (companyId: string) => {
-    router.push(`/company/service-fee`);
-  };
-
   const handlePageClick = (page: number) => {
     setSelectedPage(page);
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full  bg-white shadow-md rounded-lg mt-6">
+      <div className="flex justify-between items-center px-6 py-[18px]">
+        <h2 className="text-[18px] font-semibold text-gray-900">Fee Scheme</h2>
+      </div>
+
       {/* Table */}
       <div className="overflow-x-auto w-full">
         <table className="min-w-full table-auto">
@@ -107,16 +46,13 @@ const CompaniesTable: React.FC = () => {
                 ID
               </th>
               <th className="px-[22px] py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b-[1px] border-[#E9E9E9]">
-                Company Name
+                Activity Name
               </th>
               <th className="px-[22px] py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b-[1px] border-[#E9E9E9]">
-                Date Joined
+                Rules
               </th>
               <th className="px-[22px] py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b-[1px] border-[#E9E9E9]">
-                Status
-              </th>
-              <th className="px-[22px] py-[18px] text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b-[1px] border-[#E9E9E9]">
-                Last Activity
+                Service Fee
               </th>
               <th className="px-[22px] py-[18px] text-right text-xs font-medium text-gray-500 uppercase tracking-wider border-b-[1px] border-[#E9E9E9]">
                 Action
@@ -124,37 +60,23 @@ const CompaniesTable: React.FC = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {companies.map((company, idx) => (
+            {schemes.map((scheme, idx) => (
               <tr key={idx}>
                 <td className="px-6 py-4 whitespace-nowrap flex items-center gap-4">
                   <input type="checkbox" className="form-checkbox h-4 w-4" />
-                  {company.id}
+                  {scheme.id}
                 </td>
                 <td
-                  className="px-6 py-4 whitespace-nowrap cursor-pointer text-[#4778F5] font-medium text-[14px] leading-[20px] "
-                  onClick={() => handleCompanyClick(company.id)}
+                  className="px-6 py-4 whitespace-nowrap cursor-pointer  font-medium text-[14px] leading-[20px] "
+                  // onClick={() => handleschemeClick(scheme.id)}
                 >
-                  {company.name}
+                  {scheme.activityName}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-[#858C95] font-medium text-[14px] leading-[20px] ">
-                  {company.dateJoined}
-                </td>
-
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      company.status === "Active"
-                        ? "bg-green-100 text-green-800"
-                        : company.status === "Pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {company.status}
-                  </span>
+                  {scheme.rule}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-[#858C95] font-medium text-[14px] leading-[20px] ">
-                  {company.lastActivity}
+                  {scheme.serviceFee}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right">
                   <span className="text-gray-500 cursor-pointer">⋮</span>
@@ -164,8 +86,6 @@ const CompaniesTable: React.FC = () => {
           </tbody>
         </table>
       </div>
-
-      {/* Pagination */}
       <div className="border-b border-[#E9E9E9]"></div>
       <div className="flex items-center justify-between px-6 py-4 ">
         <span className="font-medium text-[14px] leading-[20px] tracking-[-0.5%] text-[#858C95]">
@@ -214,4 +134,4 @@ const CompaniesTable: React.FC = () => {
   );
 };
 
-export default CompaniesTable;
+export default FeeSchemeTable;
