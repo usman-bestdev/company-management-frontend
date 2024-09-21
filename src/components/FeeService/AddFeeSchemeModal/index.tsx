@@ -1,3 +1,4 @@
+import { useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 
 interface Criteria {
@@ -6,12 +7,25 @@ interface Criteria {
   value: string;
 }
 
-const AddFeeSchemeModal: React.FC = () => {
+interface AddFeeSchemeModalProps{
+  fetchServiceFees: (companyId: string) => Promise<void>
+}
+
+const AddFeeSchemeModal: React.FC<AddFeeSchemeModalProps> = ({fetchServiceFees}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [criteriaList, setCriteriaList] = useState<Criteria[]>([
     { field: "", operator: "", value: "" },
   ]);
   const [rules, setRules] = useState<string[]>([""]);
+  const [assetType, setAssetType] = useState("BTC"); // default value
+  const [activity, setActivity] = useState("Transaction"); // default value
+  const [gasPrice, setGasPrice] = useState(0); // default gas price
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [isActive, setIsActive] = useState(true); // default activity
+  const searchParams = useSearchParams();
+
+  const companyId = searchParams.get("companyId");
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
@@ -60,6 +74,39 @@ const AddFeeSchemeModal: React.FC = () => {
     setRules(updatedRules);
   };
 
+  const handleSubmit = async () => {
+    const serviceFeeData = {
+      assetType,
+      gasPrice: parseFloat(gasPrice.toString()),
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+      activity: isActive,
+      company: { id: Number(companyId) }, // Update: send company object with ID
+      criteria: criteriaList, // Example of how criteria can be passed
+      rules: rules.join(", "), // Combine rules if needed
+    };
+  
+    try {
+      const response = await fetch("http://localhost:4000/service-fee", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(serviceFeeData),
+      });
+  
+      if (response.ok) {
+        fetchServiceFees(companyId!)
+        console.log("Service Fee created successfully!");
+        handleClose(); // Close modal on success
+      } else {
+        console.error("Error creating Service Fee:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Network Error:", error);
+    }
+  };
+  
   return (
     <div>
       {/* Add New Scheme Button */}
@@ -94,10 +141,13 @@ const AddFeeSchemeModal: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700">
                     Asset Type
                   </label>
-                  <select className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-sm">
+                  <select
+                    value={assetType}
+                    onChange={(e) => setAssetType(e.target.value)}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-sm"
+                  >
                     <option>BTC</option>
-                    <option>ETH</option>
-                    <option>USDT</option>
+                    <option>GAS</option>
                   </select>
                 </div>
 
@@ -105,7 +155,13 @@ const AddFeeSchemeModal: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700">
                     Activity
                   </label>
-                  <select className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-sm">
+                  <select
+                    value={isActive ? "Active" : "Inactive"}
+                    onChange={(e) =>
+                      setIsActive(e.target.value === "Active" ? true : false)
+                    }
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-sm"
+                  >
                     <option>Transaction</option>
                     <option>Transfer</option>
                     <option>Exchange</option>
@@ -132,6 +188,8 @@ const AddFeeSchemeModal: React.FC = () => {
                     Start Time
                   </label>
                   <input
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
                     type="date"
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-sm"
                   />
@@ -143,6 +201,8 @@ const AddFeeSchemeModal: React.FC = () => {
                   </label>
                   <input
                     type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-sm"
                   />
                 </div>
@@ -261,7 +321,10 @@ const AddFeeSchemeModal: React.FC = () => {
               >
                 Cancel
               </button>
-              <button className="px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-gray-800">
+              <button
+                onClick={handleSubmit}
+                className="px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-gray-800"
+              >
                 Add
               </button>
             </div>

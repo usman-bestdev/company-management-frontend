@@ -67,7 +67,7 @@ const FeeSchemeTable: React.FC = () => {
     <div className="w-full bg-white shadow-md rounded-lg mt-6">
       <div className="flex justify-between items-center px-6 py-[18px]">
         <h2 className="text-[18px] font-semibold text-gray-900">Fee Scheme</h2>
-        <AddFeeSchemeModal />
+        <AddFeeSchemeModal fetchServiceFees={fetchServiceFees} />
       </div>
 
       {/* Table */}

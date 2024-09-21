@@ -1,9 +1,42 @@
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
-import React from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 const CompanyActionBanner: React.FC = () => {
+  const searchParams = useSearchParams();
+
+  const companyId = searchParams.get("companyId");
   const router = useRouter();
+  const [company, setCompany] = useState<null | {
+    name: string;
+    status: string;
+    logoUrl: string;
+  }>(null);
+
+  // Fetch the company data by companyId
+  useEffect(() => {
+    const fetchCompany = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/company/${companyId}`
+        );
+        const data = await response.json();
+        setCompany({
+          name: data.name,
+          status: data.status,
+          logoUrl: data.logoUrl || "/default-logo.png", // Fallback if no logo
+        });
+      } catch (error) {
+        console.error("Failed to fetch company data", error);
+      }
+    };
+
+    fetchCompany();
+  }, [companyId]);
+
+  if (!company) {
+    return <div>Loading...</div>; // Add a loading state
+  }
 
   return (
     <div className="w-full">
@@ -18,7 +51,7 @@ const CompanyActionBanner: React.FC = () => {
           {/* Company Logo */}
           <div className="w-[45px] h-[45px] bg-gray-400 rounded-full flex items-center justify-center">
             <img
-              src="/path-to-image" // Replace with actual path
+              src={company.logoUrl}
               alt="Company Logo"
               className="w-full h-full rounded-full object-cover"
             />
@@ -26,12 +59,21 @@ const CompanyActionBanner: React.FC = () => {
 
           {/* Company Name */}
           <span className="text-[24px] leading-[32px] text-[#14151A]">
-            Tech Innovations Inc
+            {company.name}
           </span>
 
           {/* Status Badge */}
-          <span className="px-3 py-1 bg-[#FDEDEC] text-[#E0944D] rounded-full text-sm font-medium">
-            Pending
+          <span className={`px-3 py-1 
+          
+          ${
+                      company.status === "active"
+                        ? "bg-green-100 text-green-800"
+                        : company.status === "pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-red-100 text-red-800"
+                    }
+          rounded-full text-sm font-medium`}>
+            {company.status.charAt(0).toUpperCase() + company.status.slice(1)}
           </span>
         </div>
 
